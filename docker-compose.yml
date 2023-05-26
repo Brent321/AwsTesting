@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+  awstesting:
+    image: awstesting
+    container_name: awstesting
+    environment:
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+    ports:
+      - 8080:80
+    build:
+      context: .
+      dockerfile: AwsTesting/Dockerfile
+    networks:
+      - brent
+  localstack:
+    container_name: localstack
+    image: localstack/localstack
+    ports:
+      - 4566:4566              # LocalStack Gateway
+      - 4510-4559:4510-4559    # external services port range
+    environment:
+      - DEBUG=${DEBUG-}
+      - SERVICES=cloudwatch,s3,secretsmanager,lambda,sqs,sns
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - brent
+networks:
+  brent:
+    driver: bridge 
