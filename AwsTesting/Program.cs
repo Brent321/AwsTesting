@@ -1,4 +1,5 @@
 using Amazon.CloudWatchLogs;
+using AwsTesting;
 using Serilog;
 using Serilog.Sinks.AwsCloudWatch;
 
@@ -26,6 +27,7 @@ var log = new LoggerConfiguration()
         cloudWatchClient: client)
     .CreateLogger();
 Log.Logger = log;
+builder.Services.AddServices();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
