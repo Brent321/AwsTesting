@@ -6,7 +6,7 @@ using Serilog.Sinks.AwsCloudWatch;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Host.UseSerilog();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -24,6 +24,7 @@ var log = new LoggerConfiguration()
     .WriteTo.AmazonCloudWatch(
         logGroup: "test",
         logStreamPrefix: DateTime.UtcNow.ToString("yyyyMMddHHmmssfff"),
+        createLogGroup: true,
         cloudWatchClient: client)
     .CreateLogger();
 Log.Logger = log;
