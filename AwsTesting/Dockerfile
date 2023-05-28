@@ -25,6 +25,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-
-
 ENTRYPOINT ["waitforit", "-address=http://localstack:4566", "-timeout=120", "--", "dotnet", "AwsTesting.dll"]
