@@ -22,7 +22,6 @@ namespace AwsTesting.BackgroundServices
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Secret: {x}", _config.Mssql);
-                _logger.LogInformation("Secret: {x}", _config.Test);
                 await Task.Delay(2000, stoppingToken);
             }
         }

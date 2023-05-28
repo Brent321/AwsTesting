@@ -4,6 +4,12 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
 
+# install waitforit which we will use to wait for localstack to be ready.
+ENV WAITFORIT_VERSION="v2.4.1"
+RUN apt-get update && apt-get install -y curl
+RUN curl -o /usr/local/bin/waitforit -sSL https://github.com/maxcnunes/waitforit/releases/download/$WAITFORIT_VERSION/waitforit-linux_amd64 && \
+    chmod +x /usr/local/bin/waitforit
+
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["AwsTesting/AwsTesting.csproj", "AwsTesting/"]
@@ -19,9 +25,6 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-ENV WAITFORIT_VERSION="v2.4.1"
-RUN apt-get update && apt-get install -y curl
-RUN curl -o /usr/local/bin/waitforit -sSL https://github.com/maxcnunes/waitforit/releases/download/$WAITFORIT_VERSION/waitforit-linux_amd64 && \
-    chmod +x /usr/local/bin/waitforit
+
 
 ENTRYPOINT ["waitforit", "-address=http://localstack:4566", "-timeout=120", "--", "dotnet", "AwsTesting.dll"]
