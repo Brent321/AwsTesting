@@ -1,6 +1,7 @@
 ﻿using Amazon.CloudWatchLogs;
 using Amazon.SecretsManager;
 using AwsTesting.BackgroundServices;
+using AwsTesting.IOptions;
 using Serilog;
 using Serilog.Sinks.AwsCloudWatch;
 
@@ -13,6 +14,13 @@ namespace AwsTesting
             services.AddHostedService<Worker>();
         }
 
+        public static void SetupConfiguration(this WebApplicationBuilder builder)
+        {
+            builder.Configuration.AddJsonFile("appsettings.json");
+            builder.Configuration.AddEnvironmentVariables();
+            builder.Services.AddOptions<ConnectionStrings>().BindConfiguration("ConnectionStrings");
+        }
+
         public static void SetupSecretManager(this WebApplicationBuilder builder)
         {
             builder.Configuration.AddSecretsManager(configurator: options =>
@@ -22,6 +30,7 @@ namespace AwsTesting
                     ServiceURL = "http://localstack:4566",
                     UseHttp = true
                 };
+                options.KeyGenerator = (secret, name) => name.Replace("__", ":");
                 options.CreateClient = () => new AmazonSecretsManagerClient(config);
             });
         }

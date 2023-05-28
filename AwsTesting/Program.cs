@@ -1,14 +1,11 @@
-using Amazon.CloudWatchLogs;
-using Amazon.SecretsManager;
 using AwsTesting;
 using Serilog;
-using Serilog.Sinks.AwsCloudWatch;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Host.UseSerilog();
-
+builder.SetupConfiguration();
 builder.SetupSecretManager();
 builder.SetupLogging();
 
